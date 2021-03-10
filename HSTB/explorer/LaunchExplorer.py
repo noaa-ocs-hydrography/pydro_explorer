@@ -1,4 +1,3 @@
-from __future__ import with_statement, print_function
 # Main module for launching the standalone velocipy GUI
 import inspect
 import pickle
@@ -56,7 +55,6 @@ if not _dHSTP:
 # Hence we can load the VelocipyData into a Pydro frame or a standalone lightweight app "Velocipy" with equivalent results.
 
 RunTypeEnum = enum.IntEnum("RunType", (('PYTHON', 1), ('RAW', 2), ))
-OptsEnum = enum.IntEnum('OptionNames', (("ARGS", 0), ("CMD", 1), ("ENV", 2), ("DIR", 3), ("CONSOLE", 4), ("DEBUG", 5),))
 RTE = RunTypeEnum
 
 ProgramList = {}
@@ -72,8 +70,6 @@ class ProgOpts(object):
         - fifth value is boolean of if a new console should be spawned.  Use for launching iPython shell or maybe some other programs.
         - sixth value is boolean of if the console should remain after the program exits. Use for debugging a program that has the console disappear.
             could use new shell as default -- would spawn a bunch of console windows potentially -- output would be separated but too many consoles?
-
-        OptsEnum = enum.IntEnum('OptionNames', (("ARGS", 0), ("CMD", 1), ("ENV", 2), ("DIR", 3), ("CONSOLE", 4), ("DEBUG", 5),))
 
         NOTE when run from the application any arguments with spaces will get quotes around them
         but when run from an icon they will just be joined together with spaces.
@@ -118,8 +114,6 @@ class Program:
             - fifth value is boolean of if a new console should be spawned.  Use for launching iPython shell or maybe some other programs.
             - sixth value is boolean of if the console should remain after the program exits. Use for debugging a program that has the console disappear.
                 could use new shell as default -- would spawn a bunch of console windows potentially -- output would be separated but too many consoles?
-
-            OptsEnum = enum.IntEnum('OptionNames', (("ARGS", 0), ("CMD", 1), ("ENV", 2), ("DIR", 3), ("CONSOLE", 4), ("DEBUG", 5),))
 
             NOTE when run from the application any arguments with spaces will get quotes around them
             but when run from an icon they will just be joined together with spaces.
@@ -190,7 +184,7 @@ download_gebco_rasters = Program("Download GEBCO Data for external use",
                          "Data to support the 'Beets' survey effort estimates")
 
 lnm_calc = Program("List XmlDR Stats",
-                   PythonOpts(["list_xmldr_stats.py", ], "Pydro367", "Python3\\HSTB\\scripts", True),
+                   PythonOpts(["list_xmldr_stats.py", ], "Pydro38", "Python3\\HSTB\\scripts", True),
                    path_to_html("Pydro", "General.html"),
                    "Extract Linear Nautical Miles stats from XmlDR files"
                    )
@@ -204,15 +198,20 @@ arcmap_docs = Program("ESRI-Arc",
                       docs=path_to_html("Arc", "connecting.html"))
 
 HSRR = Program("HSRR helper",
-                   ProgOpts([path_to_NOAA_site_packages("enablePyQt.bat"), "&&", "python", "HSRR_GUI.py", ], "", "Pydro367", "Python3\\HSTB\\HSRR_GUI", True),
+                   ProgOpts([path_to_NOAA_site_packages("enablePyQt.bat"), "&&", "python", "HSRR_GUI.py", ], "", "Pydro38", "Python3\\HSTB\\HSRR_GUI", True),
                    path_to_NOAA_site_packages(r"Python3\HSTB\HSRR_GUI\HSRRHelper.html"),
                    "Hydrographic Systems Readiness Review (HSRR) helper"
                    )
 
 files_checker = Program("Files Checker",
-                   PythonOpts(["Files_checker.py", ], "Pydro367", "Python3\\HSTB\\Files_Checker", True),
+                   PythonOpts(["Files_checker.py", ], "Pydro38", "Python3\\HSTB\\Files_Checker", True),
                    path_to_NOAA_site_packages(r"Python3\HSTB\Files_Checker\Read_me.htm"),
                    "App to do something helpful :)"
+                   )
+
+kluster = Program("Kluster",
+                   PythonOpts(["-m", "HSTB.Kluster", ], "Pydro38", new_console=True, persist_console=True),  # while in alpha leave the console up
+                   "Bathymetry processor"
                    )
 
 
@@ -225,9 +224,9 @@ ProgramEnum = enum.Enum('ProgramNames',
                         OPENBST SIS4 SIS5 SOUNDSPEED HDF_COMPASS STORMFIX
                         QCTOOLS CATOOLS QAX ENCX BAGEXPLORER FIGLEAF BRESS VDATUM_SEP PYDROGIS XMLDR POSTACQ
                         MAKECATALOG CHARLENE S57COMPARE ACQFILETRANSFER SHAM SCRIBBLE SIMPLE_TCARI SIMPLE_TIDES_REQ GRIDCOMP NCEICHECK
-                        LICENSES27 LICENSES LTD CONSOLE27 CREATE38ENV CONSOLE38 SPYDER38 CONSOLE367 DEMONSTRATOR27 DEMONSTRATOR36
+                        LICENSES27 LICENSES LTD CONSOLE27 CREATE38ENV CONSOLE38 SPYDER38 DEMONSTRATOR27 DEMONSTRATOR38
                         PERMISSIONS SCRIPT_FLIERS SCRIPT_UNCERTAINTY SURVEY_OUTLINES VR_BAG
-                        IMAGE_RENAME WEEKLYREP SEPERATE_2040_710_FREQ WXDEMO27 WXDEMO36
+                        IMAGE_RENAME WEEKLYREP SEPERATE_2040_710_FREQ WXDEMO27 WXDEMO38
                         NOAA_S57 PYTHON_BASICS REVERT_PB_NOTEBOOKS OCEAN_DATA_SCIENCE REVERT_ODS_NOTEBOOKS
                         TJ_ACQ_LOG NBS_EMAIL PROD_EMAIL SHPO_EMAIL PICKY
                         SUSSIE
@@ -259,20 +258,18 @@ ProgramNames = {ProgramEnum.SATMON: 'Satmon',
                 ProgramEnum.PYDROGIS: 'PydroGIS',
                 ProgramEnum.XMLDR: 'XmlDR',
                 ProgramEnum.POSTACQ: 'PostAcquisitionTools',
-                ProgramEnum.PYTHONWIN: "PythonWin (Python 3.6)",
+                ProgramEnum.PYTHONWIN: "PythonWin (Python 3.8)",
                 ProgramEnum.PYTHONWIN27: "PythonWin (Python 2.7)",
-                ProgramEnum.SPYDER: "Spyder (Python 3.6)",
                 ProgramEnum.SPYDER38: "Spyder (Python 3.8)",
                 ProgramEnum.SPYDER27: "Spyder (Python 2.7)",
                 ProgramEnum.IDLE: "IDLE",
                 ProgramEnum.FETCHTIDES: "FetchTides",
                 ProgramEnum.CREATE38ENV: "Create the Python3.8 Testing Environment",
-                ProgramEnum.CONSOLE38: "Python ready console (Python 3.8.1 2020)",
-                ProgramEnum.CONSOLE367: "Python ready console (Python 3.6.7)",
-                ProgramEnum.IPYTHON: "IPython (Python 3.6)",
-                ProgramEnum.IPYTHONWX: "wx IPython (Python 3.6)",
-                ProgramEnum.IPYTHONQT: "qt IPython (Python 3.6)",
-                ProgramEnum.IPYTHONNOTEBOOK: "Jupyter (IPython) Notebook (Python 3.6)",
+                ProgramEnum.CONSOLE38: "Python ready console (Python 3.8)",
+                ProgramEnum.IPYTHON: "IPython (Python 3.8)",
+                ProgramEnum.IPYTHONWX: "wx IPython (Python 3.8)",
+                ProgramEnum.IPYTHONQT: "qt IPython (Python 3.8)",
+                ProgramEnum.IPYTHONNOTEBOOK: "Jupyter (IPython) Notebook (Python 3.8)",
                 ProgramEnum.CONSOLE27: "Python ready console (Python 2.7)",
                 ProgramEnum.IPYTHON27: "IPython (Python 2.7)",
                 ProgramEnum.IPYTHONWX27: "wx IPython (Python 2.7)",
@@ -286,9 +283,9 @@ ProgramNames = {ProgramEnum.SATMON: 'Satmon',
                 ProgramEnum.WEEKLYREP: "Weekly Reports",
                 ProgramEnum.HYPACKLINES: "ArcMap Lines for Hypack",
                 ProgramEnum.DEMONSTRATOR27: "Common Code Base Explorer (Python 2.7)",
-                ProgramEnum.DEMONSTRATOR36: "Common Code Base Explorer (Python 3.6)",
+                ProgramEnum.DEMONSTRATOR38: "Common Code Base Explorer (Python 3.8)",
                 ProgramEnum.WXDEMO27: "wxPython Demo (Python 2.7)",
-                ProgramEnum.WXDEMO36: "wxPython Demo (Python 3.6)",
+                ProgramEnum.WXDEMO38: "wxPython Demo (Python 3.8)",
                 ProgramEnum.CHARLENE: 'Charlene',
                 ProgramEnum.S57COMPARE: 'S57 Compare',
                 ProgramEnum.ACQFILETRANSFER: 'Acquisition File Transfer',
@@ -300,7 +297,7 @@ ProgramNames = {ProgramEnum.SATMON: 'Satmon',
                 ProgramEnum.GRIDCOMP: "Compare Grids",
                 ProgramEnum.NCEICHECK: "NCEI Checkout",
                 ProgramEnum.LICENSES27: "License Information (Python27)",
-                ProgramEnum.LICENSES: "License Information (Python36)",
+                ProgramEnum.LICENSES: "License Information (Python38)",
                 ProgramEnum.PERMISSIONS: "Fix File Permissions",
                 ProgramEnum.SURVEY_OUTLINES: "Extract Survey Outlines",
                 ProgramEnum.SCRIPT_FLIERS: "Script to Find Fliers",
@@ -348,12 +345,12 @@ ProgramOpts = {
     PN[PE.CASTTIME]: [["--pylab=wx", "StartModule.py", "CastTimeGui"], "ipython.exe", "Pydro27", "Python2\\HSTP\\Pydro", ],
     PN[PE.CHARLENE]: [["charlene.py", ], RTE.PYTHON, "Pydro27", "Python2\\HSTB\\Charlene", ],
     PN[PE.S57COMPARE]: [["s57compare_gui.py", ], RTE.PYTHON, "Pydro27", "Python2\\HSTB\\s57compare", ],
-    PN[PE.ACQFILETRANSFER]: [["Acq_transfer.py", ], RTE.PYTHON, "Pydro367", "Python3\\HSTB\\Acq_file_transfer", ],
+    PN[PE.ACQFILETRANSFER]: [["Acq_transfer.py", ], RTE.PYTHON, "Pydro38", "Python3\\HSTB\\Acq_file_transfer", ],
     PN[PE.SATMON]: [["StartModule.py", r"satmon"], RTE.PYTHON, "Pydro27", "Python2\\HSTP\\Pydro", ],
-    PN[PE.ROOMBA]: [["-m", "HSTB.gui.roomba"], RTE.PYTHON, "Pydro367", ],
+    PN[PE.ROOMBA]: [["-m", "HSTB.gui.roomba"], RTE.PYTHON, "Pydro38", ],
     PN[PE.PYDROGIS]: [["StartModule.py", r"Pydro"], RTE.PYTHON, "Pydro27", "Python2\\HSTP\\Pydro", ],
     PN[PE.POSTACQ]: [["StartModule.py", r"PostAcquisitionTools"], RTE.PYTHON, "Pydro27", "Python2\\HSTP\\Pydro", ],
-    PN[PE.TJ_ACQ_LOG]: [["-m", "HSTB.acq_log"], RTE.PYTHON, "Pydro367"],
+    PN[PE.TJ_ACQ_LOG]: [["-m", "HSTB.acq_log"], RTE.PYTHON, "Pydro38"],
     PN[PE.IDLE]: [["/c " + PathToSitePkgs + "\\..\\idlelib\\idle.bat", ], 'cmd.exe', "Pydro27", "Python2\\HSTP\\Pydro", ],
     PN[PE.S7K]: [["Pydro7K2s7K.py", ], RTE.PYTHON, "Pydro27", "Python2\\HSTP\\Pydro\\Macros", ],
     PN[PE.BENCHMARK]: [["CarisBenchmarking27_V2.py", ], RTE.PYTHON, "Pydro27", "Python2\\HSTP\\Contribs\\CarisBenchmark", ],
@@ -361,30 +358,28 @@ ProgramOpts = {
     PN[PE.HYPACKLINES]: [[], None, None],
     PN[PE.TOGGLE]: [["CheckForUpdates.py", "-TOGGLE"], RTE.RAW, "Pydro27", "Python2\\HSTP\\Pydro", ],
 
-    PN[PE.LTD]: [["-m", "HSTB.gui.datatransfer"], RTE.PYTHON, "Pydro367"],
-    PN[PE.PYTHONWIN]: [["Pydro367"], path_to_NOAA_site_packages("run_pythonwin.bat"), "base", "", True],
-    # PN[PE.PYTHONWIN]: [[], PathToSitePkgs.lower().replace("\\envs\\pydro27", "\\envs\\pydro367") + '\\pythonwin\\Pythonwin.exe', "Pydro367"],
-    PN[PE.CONSOLE367]: [[], "", "Pydro367", "Python3", True, True],
-    PN[PE.SPYDER38]: [[], "spyder", "Pydro38_Test", "", True],
-    PN[PE.CREATE38ENV]: [[], path_to_NOAA_site_packages("MakePydro38_TestEnv.bat"), "", "", True, True],
-    PN[PE.CONSOLE38]: [[], "", "Pydro38_Test", "Python38", True, True],
-    PN[PE.IPYTHON]: [["--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro367", "", True, True],
-    PN[PE.IPYTHONWX]: [["--pylab=wx", "--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro367", "", True, True],
-    PN[PE.IPYTHONQT]: [["--pylab=qt", "--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro367", "", True, True],
-    PN[PE.IPYTHONNOTEBOOK]: [["notebook", "--notebook-dir=%s" % jupyter_docs], "jupyter", "Pydro367", "", True, True],
-    #    PN[PE.SPYDER]: [[], "spyder", "Pydro367", "", True],
-    # PN[PE.SPYDER]: [[path_to_HSTB("..\..\enablePyQt.bat"), "&&", path_to_HSTB(r"..\..\RunSpyder36_2019.bat")], "", "Pydro367", "", True],
-    PN[PE.SPYDER]: [[], path_to_NOAA_site_packages("RunSpyder36_2019.bat"), "Pydro367", "", True],
+    PN[PE.LTD]: [["-m", "HSTB.gui.datatransfer"], RTE.PYTHON, "Pydro38"],
+    PN[PE.PYTHONWIN]: [["Pydro38"], path_to_NOAA_site_packages("run_pythonwin.bat"), "base", "", True],
+    # PN[PE.PYTHONWIN]: [[], PathToSitePkgs.lower().replace("\\envs\\pydro27", "\\envs\\Pydro38") + '\\pythonwin\\Pythonwin.exe', "Pydro38"],
+    PN[PE.SPYDER38]: [[], "spyder", "Pydro38", "", True],
+    # PN[PE.CREATE38ENV]: [[], path_to_NOAA_site_packages("MakePydro38Env.bat"), "", "", True, True],
+    PN[PE.CONSOLE38]: [[], "", "Pydro38", "Python38", True, True],
+    PN[PE.IPYTHON]: [["--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro38", "", True, True],
+    PN[PE.IPYTHONWX]: [["--pylab=wx", "--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro38", "", True, True],
+    PN[PE.IPYTHONQT]: [["--pylab=qt", "--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro38", "", True, True],
+    PN[PE.IPYTHONNOTEBOOK]: [["notebook", "--notebook-dir=%s" % jupyter_docs], "jupyter", "Pydro38", "", True, True],
+    # PN[PE.SPYDER]: [[path_to_HSTB("..\..\enablePyQt.bat"), "&&", path_to_HSTB(r"..\..\RunSpyder38_2019.bat")], "", "Pydro38", "", True],
+    # PN[PE.SPYDER]: [[], path_to_NOAA_site_packages("RunSpyder38_2019.bat"), "Pydro38", "", True],
     # Setting the python path to the Python27 modules lets the demo code run without making a second copy in the Python3 directory.
     # There can't be spaces in the pythonpath so strip any spaces off the pkg_dir and then split it to make params without spaces.
     # Conda doesn't allow spaces so the pkg_dir.split(" ") isn't really necessary
     # if there were spaces in the path it should work though due to strip() and split()
-    PN[PE.DEMONSTRATOR36]: [['-m', 'HSTB.gui.demo'], RTE.PYTHON, "Pydro367"],
-    # PN[PE.DEMONSTRATOR36]: [["set"] + ("pythonpath=" + pkg_dir.strip()).split(" ") + ['&&', 'python', '-m', 'HSTB.gui.demo'], "", "Pydro367"],
-    # PN[PE.DEMONSTRATOR36]: [["pythonpath=%s" % pkg_dir, '&&', 'python', '-m', 'HSTB.gui.demo'], "set", "Pydro367"],
+    PN[PE.DEMONSTRATOR38]: [['-m', 'HSTB.gui.demo'], RTE.PYTHON, "Pydro38"],
+    # PN[PE.DEMONSTRATOR38]: [["set"] + ("pythonpath=" + pkg_dir.strip()).split(" ") + ['&&', 'python', '-m', 'HSTB.gui.demo'], "", "Pydro38"],
+    # PN[PE.DEMONSTRATOR38]: [["pythonpath=%s" % pkg_dir, '&&', 'python', '-m', 'HSTB.gui.demo'], "set", "Pydro38"],
     PN[PE.DEMONSTRATOR27]: [["-m", r"HSTB.gui.demo"], RTE.PYTHON, "Pydro27"],
     PN[PE.WXDEMO27]: [["-m", r"wxPython_demo.demo"], RTE.PYTHON, "Pydro27"],
-    PN[PE.WXDEMO36]: [["-m", r"wxPython_demo.demo"], RTE.PYTHON, "Pydro367"],
+    PN[PE.WXDEMO38]: [["-m", r"wxPython_demo.demo"], RTE.PYTHON, "Pydro38"],
     PN[PE.SPYDER27]: [[], "spyder", "Pydro27", "", True],
     # PN[PE.PYTHONWIN27]: [[], PathToSitePkgs + '\\pythonwin\\Pythonwin.exe', "Pydro27", ],
     PN[PE.PYTHONWIN27]: [["Pydro27"], path_to_NOAA_site_packages("run_pythonwin.bat"), "base", "", True],
@@ -393,12 +388,12 @@ ProgramOpts = {
     PN[PE.IPYTHONWX27]: [["--pylab=wx", "--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro27", "", True, True],
     PN[PE.IPYTHONQT27]: [["--pylab=qt", "--ipython-dir=%s" % docs_path], "ipython.exe", "Pydro27", "", True, True],
     PN[PE.IPYTHONNOTEBOOK27]: [["notebook", "--notebook-dir=%s" % jupyter_docs], "jupyter", "Pydro27", "", True, True],
-    PN[PE.IMAGE_RENAME]: [["-m", "HSTB.gui.renaming_images", ], RTE.PYTHON, "Pydro367"],
-    PN[PE.NBS_EMAIL]: [["-m", "HSTB.gui.nbs_transmit", ], RTE.PYTHON, "Pydro367"],
-    PN[PE.PROD_EMAIL]: [["-m", "HSTB.gui.product_transmit", ], RTE.PYTHON, "Pydro367"],
-    PN[PE.SHPO_EMAIL]: [["-m", "HSTB.gui.shpo_email", ], RTE.PYTHON, "Pydro367"],
-    PN[PE.DIR_SIZES]: [["folder_sizes.py", ], RTE.PYTHON, "Pydro367", "Python3\\HSTB\\scripts"],
-    PN[PE.SEPERATE_2040_710_FREQ]: [["allfreq.py", ], RTE.PYTHON, "Pydro367", "Python3\\HSTB\\scripts", True, True],
+    PN[PE.IMAGE_RENAME]: [["-m", "HSTB.gui.renaming_images", ], RTE.PYTHON, "Pydro38"],
+    PN[PE.NBS_EMAIL]: [["-m", "HSTB.gui.nbs_transmit", ], RTE.PYTHON, "Pydro38"],
+    PN[PE.PROD_EMAIL]: [["-m", "HSTB.gui.product_transmit", ], RTE.PYTHON, "Pydro38"],
+    PN[PE.SHPO_EMAIL]: [["-m", "HSTB.gui.shpo_email", ], RTE.PYTHON, "Pydro38"],
+    PN[PE.DIR_SIZES]: [["folder_sizes.py", ], RTE.PYTHON, "Pydro38", "Python3\\HSTB\\scripts"],
+    PN[PE.SEPERATE_2040_710_FREQ]: [["allfreq.py", ], RTE.PYTHON, "Pydro38", "Python3\\HSTB\\scripts", True, True],
     PN[PE.ENCPRODSPEC]: [["ChangeENCProductSpec.py", ], RTE.PYTHON, "Pydro27", "Python2\\HSTB\\scripts", ],
     PN[PE.MAKECATALOG]: [["-m", "HSTB.gui.make_000_catalog", ], RTE.PYTHON, "Pydro27", "", ],
     PN[PE.PHBCOPY]: [["-m", "HSTB.gui.copy_backscatter", ], RTE.PYTHON, "Pydro27", "", ],
@@ -410,45 +405,45 @@ ProgramOpts = {
     PN[PE.VDATUM_SEP]: [["-m", r"HSTB.gui.VDatumGridFromShapefilePoly"], RTE.PYTHON, "Pydro27", "", ],
     PN[PE.AUTOQC]: [["-m", r"HSTB.gui.POSPacAutoQC"], RTE.PYTHON, "Pydro27", "", ],
     PN[PE.LICENSES27]: [["-m", r"HSTB.gui.licenses", ], RTE.PYTHON, "Pydro27"],
-    PN[PE.LICENSES]: [[r"license_gui.py", ], RTE.PYTHON, "Pydro367", "Python3\\HSTB\\gui\\licenses"],
+    PN[PE.LICENSES]: [[r"license_gui.py", ], RTE.PYTHON, "Pydro38", "Python3\\HSTB\\gui\\licenses"],
     PN[PE.PERMISSIONS]: [[], "fix_permissions.bat", "", "", True],
-    PN[PE.SURVEY_OUTLINES]: [["-m", "HSTB.survey_outline.gui"], RTE.PYTHON, "Pydro367", ""],
+    PN[PE.SURVEY_OUTLINES]: [["-m", "HSTB.survey_outline.gui"], RTE.PYTHON, "Pydro38", ""],
     PN[PE.VELOCIPY]: [["-m", r"HSTB.gui.soundspeed"], RTE.PYTHON, "Pydro27"],
     PN[PE.SIMPLE_TCARI]: [["-m", r"HSTB.gui.TCARI", "-p", "0"], RTE.PYTHON, "Pydro27"],
     PN[PE.SIMPLE_TIDES_REQ]: [["-m", r"HSTB.gui.TCARI", "-p", "1"], RTE.PYTHON, "Pydro27"],
     PN[PE.AUVDEPTH]: [["-m", r"HSTB.gui.AUVDepth"], RTE.PYTHON, "Pydro27"],
 
-    PN[PE.VR_BAG]: [["VR_to_SR_Bag.py", ], RTE.PYTHON, "Pydro367", "Python3\\HSTB\\scripts", ],
+    PN[PE.VR_BAG]: [["VR_to_SR_Bag.py", ], RTE.PYTHON, "Pydro38", "Python3\\HSTB\\scripts", ],
 
-    PN[PE.BAGEXPLORER]: [["-m", r"hyo2.bagexplorer"], RTE.PYTHON, "Pydro367"],
-    PN[PE.BRESS]: [["-m", r"hyo2.bress.app"], RTE.PYTHON, "Pydro367"],
-    PN[PE.CATOOLS]: [["-m", r"hyo2.ca.catools"], RTE.PYTHON, "Pydro367"],
-    PN[PE.ENCX]: [["-m", r"hyo2.encx"], RTE.PYTHON, "Pydro367"],
-    PN[PE.FIGLEAF]: [["-m", r"hyo2.figleaf.app"], RTE.PYTHON, "Pydro367"],
-    PN[PE.OPENBST]: [["-m", r"hyo2.openbst.app"], RTE.PYTHON, "Pydro367"],
-    PN[PE.QCTOOLS]: [["-m", r"hyo2.qc.qctools"], RTE.PYTHON, "Pydro367"],
-    PN[PE.QAX]: [["-m", r"hyo2.qax.app"], RTE.PYTHON, "Pydro367"],
-    PN[PE.NOAA_S57]: [["-m", r"hyo2.abc.app.dialogs.noaa_s57"], RTE.PYTHON, "Pydro367"],
-    PN[PE.SCRIPT_FLIERS]: [["run_find_fliers_v8.py", ], RTE.PYTHON, "Pydro367",
+    PN[PE.BAGEXPLORER]: [["-m", r"hyo2.bagexplorer"], RTE.PYTHON, "Pydro38"],
+    PN[PE.BRESS]: [["-m", r"hyo2.bress.app"], RTE.PYTHON, "Pydro38"],
+    PN[PE.CATOOLS]: [["-m", r"hyo2.ca.catools"], RTE.PYTHON, "Pydro38"],
+    PN[PE.ENCX]: [["-m", r"hyo2.encx"], RTE.PYTHON, "Pydro38"],
+    PN[PE.FIGLEAF]: [["-m", r"hyo2.figleaf.app"], RTE.PYTHON, "Pydro38"],
+    PN[PE.OPENBST]: [["-m", r"hyo2.openbst.app"], RTE.PYTHON, "Pydro38"],
+    PN[PE.QCTOOLS]: [["-m", r"hyo2.qc.qctools"], RTE.PYTHON, "Pydro38"],
+    PN[PE.QAX]: [["-m", r"hyo2.qax.app"], RTE.PYTHON, "Pydro38"],
+    PN[PE.NOAA_S57]: [["-m", r"hyo2.abc.app.dialogs.noaa_s57"], RTE.PYTHON, "Pydro38"],
+    PN[PE.SCRIPT_FLIERS]: [["run_find_fliers_v8.py", ], RTE.PYTHON, "Pydro38",
                            "Python3\\hyo2\\qc\\scripts", ],
-    PN[PE.SCRIPT_UNCERTAINTY]: [["run_bag_uncertainty_check.py", ], RTE.PYTHON, "Pydro367",
+    PN[PE.SCRIPT_UNCERTAINTY]: [["run_bag_uncertainty_check.py", ], RTE.PYTHON, "Pydro38",
                                 "Python3\\hyo2\\qc\\scripts", ],
-    PN[PE.SIS4]: [["run.py", ], RTE.PYTHON, "Pydro367", "Python3\\hyo2\\kng\\emu\\sis4", ],
-    PN[PE.SIS5]: [["run.py", ], RTE.PYTHON, "Pydro367", "Python3\\hyo2\\kng\\emu\\kctrl", ],
-    PN[PE.SOUNDSPEED]: [["-m", r"hyo2.soundspeedmanager"], RTE.PYTHON, "Pydro367"],
-    PN[PE.HDF_COMPASS]: [["-m", r"hdf_compass.compass_viewer"], RTE.PYTHON, "Pydro367"],
-    PN[PE.STORMFIX]: [["-m", r"hyo2.stormfix.app"], RTE.PYTHON, "Pydro367"],
+    PN[PE.SIS4]: [["run.py", ], RTE.PYTHON, "Pydro38", "Python3\\hyo2\\kng\\emu\\sis4", ],
+    PN[PE.SIS5]: [["run.py", ], RTE.PYTHON, "Pydro38", "Python3\\hyo2\\kng\\emu\\kctrl", ],
+    PN[PE.SOUNDSPEED]: [["-m", r"hyo2.soundspeedmanager"], RTE.PYTHON, "Pydro38"],
+    PN[PE.HDF_COMPASS]: [["-m", r"hdf_compass.compass_viewer"], RTE.PYTHON, "Pydro38"],
+    PN[PE.STORMFIX]: [["-m", r"hyo2.stormfix.app"], RTE.PYTHON, "Pydro38"],
 
     PN[PE.PYTHON_BASICS]: [["notebook", "Python3\\hyo2\\notebooks\\python_basics\\index.ipynb"], "jupyter",
-                           "Pydro367", "", True, True],
+                           "Pydro38", "", True, True],
     PN[PE.REVERT_PB_NOTEBOOKS]: [["Python3\\hyo2\\notebooks\\python_basics"],
                                  path_to_NOAA_site_packages("remove_and_revert.bat"), "", ""],
     PN[PE.OCEAN_DATA_SCIENCE]: [["notebook", "Python3\\hyo2\\notebooks\\ocean_data_science\\index.ipynb"], "jupyter",
-                                "Pydro367", "", True, True],
+                                "Pydro38", "", True, True],
     PN[PE.REVERT_ODS_NOTEBOOKS]: [["Python3\\hyo2\\notebooks\\ocean_data_science"],
                                   path_to_NOAA_site_packages("remove_and_revert.bat"), "", ""],
-    PN[PE.PICKY]: [["-m", r"HSTB.picky"], RTE.PYTHON, "Pydro367"],
-    PN[PE.SUSSIE]: [["-m", r"oshydro.sussie.app"], RTE.PYTHON, "Pydro367"],
+    PN[PE.PICKY]: [["-m", r"HSTB.picky"], RTE.PYTHON, "Pydro38"],
+    PN[PE.SUSSIE]: [["-m", r"oshydro.sussie.app"], RTE.PYTHON, "Pydro38"],
 }
 
 ProgramIcons = {
@@ -488,15 +483,13 @@ ProgramIcons = {
 
     PN[PE.LTD]: PathToResource("Pydro.ico"),
     PN[PE.PYTHONWIN]: PathToResource("Pydro.ico"),
-    PN[PE.CONSOLE367]: PathToResource("Pydro.ico"),
     PN[PE.IPYTHON]: PathToResource("Pydro.ico"),
     PN[PE.IPYTHONWX]: PathToResource("Pydro.ico"),
     PN[PE.IPYTHONQT]: PathToResource("Pydro.ico"),
     PN[PE.IPYTHONNOTEBOOK]: PathToResource("Pydro.ico"),
-    PN[PE.SPYDER]: PathToResource("Pydro.ico"),
     PN[PE.SPYDER27]: PathToResource("Pydro.ico"),
     PN[PE.SPYDER38]: PathToResource("Pydro.ico"),
-    PN[PE.CREATE38ENV]: PathToResource("Pydro.ico"),
+    # PN[PE.CREATE38ENV]: PathToResource("Pydro.ico"),
     PN[PE.CONSOLE38]: PathToResource("Pydro.ico"),
     PN[PE.PYTHONWIN27]: PathToResource("Pydro.ico"),
     PN[PE.CONSOLE27]: PathToResource("Pydro.ico"),
@@ -511,9 +504,9 @@ ProgramIcons = {
     PN[PE.PERMISSIONS]: PathToResource("Pydro.ico"),
     PN[PE.SURVEY_OUTLINES]: PathToResource("Pydro.ico"),
     PN[PE.DEMONSTRATOR27]: PathToResource("Pydro.ico"),
-    PN[PE.DEMONSTRATOR36]: PathToResource("Pydro.ico"),
+    PN[PE.DEMONSTRATOR38]: PathToResource("Pydro.ico"),
     PN[PE.WXDEMO27]: PathToResource("Pydro.ico"),
-    PN[PE.WXDEMO36]: PathToResource("Pydro.ico"),
+    PN[PE.WXDEMO38]: PathToResource("Pydro.ico"),
     PN[PE.SIMPLE_TCARI]: PathToResource("Pydro.ico"),
     PN[PE.SIMPLE_TIDES_REQ]: PathToResource("Pydro.ico"),
     PN[PE.AUVDEPTH]: PathToResource("Pydro.ico"),
@@ -612,16 +605,14 @@ ProgramDocs = {
     PN[PE.PYDROGIS]: path_to_html("Pydro", "Pydro.html"),
     PN[PE.XMLDR]: path_to_html("Apps", "XmlDR.html"),
     PN[PE.POSTACQ]: path_to_html("Apps", "PostAcqTools.html"),
-    PN[PE.SPYDER]: PYTHON_DOCS,
     PN[PE.SPYDER27]: PYTHON_DOCS,
     PN[PE.SPYDER38]: PYTHON_DOCS,
     PN[PE.PYTHONWIN]: PYTHON_DOCS,
     PN[PE.PYTHONWIN27]: PYTHON_DOCS,
     PN[PE.IDLE]: PYTHON_DOCS,
     PN[PE.FETCHTIDES]: path_to_html("Apps", "Fetchtides.html"),
-    PN[PE.CREATE38ENV]: PYTHON_DOCS,
+    # PN[PE.CREATE38ENV]: PYTHON_DOCS,
     PN[PE.CONSOLE38]: PYTHON_DOCS,
-    PN[PE.CONSOLE367]: PYTHON_DOCS,
     PN[PE.CONSOLE27]: PYTHON_DOCS,
     PN[PE.IPYTHON27]: PYTHON_DOCS,
     PN[PE.IPYTHONWX27]: PYTHON_DOCS,
@@ -630,7 +621,7 @@ ProgramDocs = {
     PN[PE.IPYTHONWX]: PYTHON_DOCS,
     PN[PE.IPYTHONQT]: PYTHON_DOCS,
     PN[PE.WXDEMO27]: PYTHON_DOCS,
-    PN[PE.WXDEMO36]: PYTHON_DOCS,
+    PN[PE.WXDEMO38]: PYTHON_DOCS,
     PN[PE.IPYTHONNOTEBOOK]: PYTHON_DOCS,
     PN[PE.BENCHMARK]: path_to_html("Apps", "Caris_Benchmark_Instructions.html"),
     PN[PE.WEEKLYREP]: path_to_html("Apps", "weekly_reports.html"),
@@ -639,7 +630,7 @@ ProgramDocs = {
     PN[PE.SURVEY_OUTLINES]: path_to_html("Pydro", "ExtractSurveyOutlines.html"),
     PN[PE.TOGGLE]: path_to_html("Apps", "Toggle.html"),
     PN[PE.DEMONSTRATOR27]: path_to_html("Apps", "CodeBaseDemo.html"),
-    PN[PE.DEMONSTRATOR36]: path_to_html("Apps", "CodeBaseDemo.html"),
+    PN[PE.DEMONSTRATOR38]: path_to_html("Apps", "CodeBaseDemo.html"),
     PN[PE.ENCX]: path_to_html("Apps", "ENCX.html"),
     PN[PE.SIMPLE_TCARI]: path_to_html("Apps", "SimpleTCARI.html"),
     PN[PE.SIMPLE_TIDES_REQ]: path_to_html("Apps", "SimpleTidesRequest.html"),
@@ -703,7 +694,6 @@ program_simple_descr = {
     PN[PE.XMLDR]: """Data entry application to create various reports, stored in PDF and printable to PDF""",
     PN[PE.POSTACQ]: """Set of tools is aimed at fixing data issues in raw data""",
     PN[PE.TJ_ACQ_LOG]: """ Program that will take the positioning from SIS, time from the computer, and any text notes written and create a geopackage that can be opened in Caris 11 """,
-    PN[PE.SPYDER]: """Python IDE""",
     PN[PE.SPYDER27]: """Python IDE""",
     PN[PE.SPYDER38]: """Python IDE""",
     PN[PE.PYTHONWIN]: """Python IDE""",
@@ -711,8 +701,7 @@ program_simple_descr = {
     PN[PE.IDLE]: """Python IDE""",
     PN[PE.FETCHTIDES]: """Tool for downloading, storing and exporting tide data from NOAA's |COOPS|""",
     PN[PE.CONSOLE27]: """Python IDE""",
-    PN[PE.CONSOLE367]: """Python IDE""",
-    PN[PE.CREATE38ENV]: """Python IDE""",
+    # PN[PE.CREATE38ENV]: """Python IDE""",
     PN[PE.CONSOLE38]: """Python IDE""",
     PN[PE.IPYTHON27]: """Python IDE""",
     PN[PE.IPYTHONWX27]: """Python IDE""",
@@ -724,9 +713,9 @@ program_simple_descr = {
     PN[PE.WEEKLYREP]: """Arc + Caris tool to create weekly report tif images""",
     PN[PE.HYPACKLINES]: """Arc tool to create survey lines""",
     PN[PE.DEMONSTRATOR27]: """Development environment to show and test code and modules within the Pydro distribution""",
-    PN[PE.DEMONSTRATOR36]: """Development environment to show and test code and modules within the Pydro distribution""",
+    PN[PE.DEMONSTRATOR38]: """Development environment to show and test code and modules within the Pydro distribution""",
     PN[PE.WXDEMO27]: """Demostrates WX graphical user interface""",
-    PN[PE.WXDEMO36]: """Demostrates WX graphical user interface""",
+    PN[PE.WXDEMO38]: """Demostrates WX graphical user interface""",
     PN[PE.ENCX]: """Tools to explore the ENC data content at multiple levels""",
     PN[PE.SIMPLE_TCARI]: """Basic interface to apply TCARI tides data""",
     PN[PE.SIMPLE_TIDES_REQ]: """Tool to request tides from co-ops (for NOAA surveys)""",
@@ -850,25 +839,7 @@ All Programs distributed in Pydro
         self._ZfileMenu = G('&File', [])
         self._ZfileMenuSection = [
             G("New", [[
-                I(PN[PE.SCRIBBLE], self),
-                I(PN[PE.NOAA_S57], self),
-                I(PN[PE.BRESS], self),
-                I(PN[PE.FIGLEAF], self),
-                I(PN[PE.OPENBST], self),
-                I(PN[PE.CATOOLS], self),
-                I(PN[PE.QAX], self),
-                I(PN[PE.STORMFIX], self),
-                # I(PN[PE.ROOMBA], self),
-                I(PN[PE.GRIDCOMP], self),
-                I(PN[PE.NCEICHECK], self),
-                I(PN[PE.SCRIPT_FLIERS], self),
-                I(PN[PE.SCRIPT_UNCERTAINTY], self),
-                I(PN[PE.SIS5], self),
-                I(PN[PE.SURVEY_OUTLINES], self),
-                I(PN[PE.VR_BAG], self),
-                I(PN[PE.LTD], self),
-                I(PN[PE.PYTHON_BASICS], self),
-                I(PN[PE.OCEAN_DATA_SCIENCE], self),
+                I(kluster.name, self),
             ]], -1),
             G("Backscatter", [[
                 I(PN[PE.BRESS], self),
@@ -952,10 +923,11 @@ All Programs distributed in Pydro
                 I(PN[PE.ACQFILETRANSFER], self),
                 I(PN[PE.SHAM], self),
                 I(PN[PE.STORMFIX], self),
+                I(kluster.name, self),
             ]], -1),
             G("Learning", [[
                 I(PN[PE.DEMONSTRATOR27], self),
-                I(PN[PE.DEMONSTRATOR36], self),
+                I(PN[PE.DEMONSTRATOR38], self),
                 I(PN[PE.PYTHON_BASICS], self),
                 I(PN[PE.REVERT_PB_NOTEBOOKS], self),
                 I(PN[PE.OCEAN_DATA_SCIENCE], self),
@@ -974,28 +946,23 @@ All Programs distributed in Pydro
                 I(PN[PE.POSTACQ], self),
                 # I(PN[PE.BENCHMARK], self),
                 I(PN[PE.PERMISSIONS], self),
-                G('Python 3.6 shells and editors', [[
-                    I(PN[PE.SPYDER], self),
+                G('Python 3.8 shells and editors', [[
+                    I(PN[PE.SPYDER38], self),
                     I(PN[PE.PYTHONWIN], self),
                     I(PN[PE.IPYTHON], self),
                     I(PN[PE.IPYTHONNOTEBOOK], self),
-                    I(PN[PE.CONSOLE367], self),
-                    I(PN[PE.WXDEMO36], self),
-                ]], -1),
-                G('Python 2.7 shells and editors', [[
-                    I(PN[PE.SPYDER27], self),
-                    I(PN[PE.PYTHONWIN27], self),
-                    I(PN[PE.IPYTHON27], self),
-                    I(PN[PE.IPYTHONNOTEBOOK27], self),
-                    I(PN[PE.IPYTHONWX27], self),
-                    I(PN[PE.CONSOLE27], self),
-                    I(PN[PE.WXDEMO27], self),
-                ]], -1),
-                G('Python 3.8 shells and editors', [[
-                    I(PN[PE.CREATE38ENV], self),
-                    I(PN[PE.SPYDER38], self),
                     I(PN[PE.CONSOLE38], self),
+                    I(PN[PE.WXDEMO38], self),
                 ]], -1),
+                # G('Python 2.7 shells and editors', [[
+                #     I(PN[PE.SPYDER27], self),
+                #     I(PN[PE.PYTHONWIN27], self),
+                #     I(PN[PE.IPYTHON27], self),
+                #     I(PN[PE.IPYTHONNOTEBOOK27], self),
+                #     I(PN[PE.IPYTHONWX27], self),
+                #     I(PN[PE.CONSOLE27], self),
+                #     I(PN[PE.WXDEMO27], self),
+                # ]], -1),
                 I(PN[PE.IDLE], self),
                 I(PN[PE.AUVDEPTH], self),
                 I(PN[PE.SIS4], self),
@@ -1010,6 +977,7 @@ All Programs distributed in Pydro
                 I(PN[PE.ROOMBA], self),
                 I(PN[PE.TJ_ACQ_LOG], self),
                 I(files_checker.name, self),
+                I(kluster.name, self),
             ]], -1),
         ]
 #        self._WindowMenu = G('&Window',[])
@@ -1076,7 +1044,14 @@ All Programs distributed in Pydro
         return sub_args
 
     def _Launch(self, run_opts):  # args=[], startProg=RunTypeEnum.PYTHON, env="", start_directory="", new_console=False, persistent_env=False):
-        if run_opts.dir or run_opts.args or run_opts.cmd not in RunTypeEnum:  # don't run if there aren't arguments (ArcMap tools etc.)
+        try:
+            RunTypeEnum[run_opts.cmd]  # used to be able to say "PYTHON" in RunTypeEnum but in Python3 it no longer works.
+            std_exe = True
+        except KeyError:
+            vals = [item.value for item in RunTypeEnum]
+            # names = [item.name for item in RunTypeEnum]
+            std_exe = run_opts.cmd in vals  # or run_opts.cmd in names
+        if run_opts.dir or run_opts.args or std_exe or (run_opts.cmd and isinstance(run_opts.cmd, str)):  # don't run if there aren't arguments (ArcMap tools etc.)
             sub_args = self.CreateArgs(run_opts)
             print(sub_args)
             os.chdir(sub_args[0])
@@ -1100,7 +1075,7 @@ All Programs distributed in Pydro
             opts.persist_console = True  # force the program to have it's own console and remain after closing (the /K option for cmd.exe)
             opts.new_console = True
         self._Launch(opts)
-        pickle.dump(self.recent, open(self.pickle_fname, "w+"))
+        pickle.dump(self.recent, open(self.pickle_fname, "wb+"))
 
     def OnCreateDesktopIcon(self, evt):
         item = self.tree.GetSelection()
@@ -1304,7 +1279,7 @@ All Programs distributed in Pydro
 
     def CreateRecentItemsList(self):
         try:
-            self.recent = pickle.load(open(self.pickle_fname, "r"))
+            self.recent = pickle.load(open(self.pickle_fname, "rb"))
             self.recent = self.recent[-40:]
         except:  # no file
             pass
@@ -1317,10 +1292,10 @@ All Programs distributed in Pydro
         return group
 
     def CreateHTMLWindow(self):
-        # Set up the contact tree control with log window
         self.htmlpanel = wx.Panel(self, -1)
+
         sizer = wx.BoxSizer(wx.VERTICAL)
-        btnSizer = wx.FlexGridSizer(1, 4, 10)
+        btnSizer = wx.FlexGridSizer(1, 4, 10, 0)
         btnSizer.SetFlexibleDirection(wx.HORIZONTAL)
 
         self.runbtn = btn = wx.Button(self.htmlpanel, -1, "Run Program", style=wx.BU_EXACTFIT)
@@ -1338,8 +1313,8 @@ All Programs distributed in Pydro
         self.debugbtn = btn = wx.Button(self.htmlpanel, -1, "Debug", style=wx.BU_EXACTFIT)
         self.Bind(wx.EVT_BUTTON, self.OnDebugProgram, btn)
         btnSizer.Add(btn, 0, wx.ALL | wx.ALIGN_RIGHT, 2)
-        # FIXME @TODO -- this AddGrowableCol is causing a hard crash -- is it the wx version or an interaction with another module?
-        # btnSizer.AddGrowableCol(btnSizer.GetItemCount() - 1)
+
+        btnSizer.AddGrowableCol(btnSizer.GetItemCount() - 1)
 
         btnSizer2nd = wx.BoxSizer(wx.HORIZONTAL)
         btn = wx.Button(self.htmlpanel, -1, "<--", style=wx.BU_EXACTFIT)
