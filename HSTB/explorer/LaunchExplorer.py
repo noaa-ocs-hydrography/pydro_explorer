@@ -210,7 +210,7 @@ files_checker = Program("Files Checker",
                    )
 
 kluster = Program("Kluster",
-                   PythonOpts(["-m", "HSTB.Kluster", ], "Pydro38", new_console=True, persist_console=True),  # while in alpha leave the console up
+                   PythonOpts(["-m", "HSTB.kluster", ], "Pydro38", new_console=True, persist_console=True),  # while in alpha leave the console up
                    "Bathymetry processor"
                    )
 
