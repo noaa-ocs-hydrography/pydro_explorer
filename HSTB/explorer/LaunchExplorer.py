@@ -18,11 +18,11 @@ import wx.aui
 import wx.lib.agw.customtreectrl as CT
 from wx.lib.mixins import treemixin
 try:
-    import wx.lib.iewin as iewin
-    print("ActiveX")
-except:
     import wx.html2 as webview
     print("HTML2")
+except:
+    import wx.lib.iewin as iewin
+    print("ActiveX")
 
 from HSTB.shared import Constants
 from HSTB.gui import BaseAuiFrame
@@ -211,6 +211,7 @@ files_checker = Program("Files Checker",
 
 kluster = Program("Kluster",
                    PythonOpts(["-m", "HSTB.kluster", ], "Pydro38", new_console=True, persist_console=True),  # while in alpha leave the console up
+                   "https://kluster.readthedocs.io/en/latest/?badge=latest",
                    "Bathymetry processor"
                    )
 
@@ -1357,6 +1358,23 @@ All Programs distributed in Pydro
         open(PathToDocs("temp.html"), "w+").write(html)
         self.htmlview.LoadURL(PathToDocs("temp.html"))
 
+    def BeforeNavigate2(self, this, pDisp, URL, Flags, TargetFrameName,
+                        PostData, Headers, Cancel):
+        # this is the event for IE like webviewnavigating
+        pass
+        # self.log.write('BeforeNavigate2: %s\n' % URL[0])
+        # if URL[0] == 'http://www.microsoft.com/':
+        #     if wx.MessageBox("Are you sure you want to visit Microsoft?",
+        #                      style=wx.YES_NO|wx.ICON_QUESTION) == wx.NO:
+        #         # This is how you can cancel loading a page.  The
+        #         # Cancel parameter is defined as an [in,out] type and
+        #         # so setting the value means it will be returned and
+        #         # checked in the COM control.
+        #         Cancel[0] = True
+
+    # def NewWindow3(self, this, pDisp, Cancel, Flags, urlContext, URL):
+    #     Cancel[0] = True   # Veto the creation of a  new window.
+
     def OnPrevPageButton(self, event):
         self.htmlview.GoBack()
 
@@ -1389,10 +1407,10 @@ All Programs distributed in Pydro
                     self.tree.DoSelectItem(c)
                     break
             # self.Launch(program_name)
-        if url.lower().startswith("http"):
-            self.log.write("Showing " + url + " in external browser\n")
-            win32api.ShellExecute(0, None, url, None, '', win32con.SW_SHOW)  # should launch default browser
-            evt.Veto()
+        # if url.lower().startswith("http"):
+        #     self.log.write("Showing " + url + " in external browser\n")
+        #     win32api.ShellExecute(0, None, url, None, '', win32con.SW_SHOW)  # should launch default browser
+        #     evt.Veto()
 
     def OnWebViewLoaded(self, evt):
         self.current_url = evt.GetURL()
@@ -1486,7 +1504,11 @@ All Programs distributed in Pydro
             pass
         # self.log.write("OnSelection: %s\n"%self.tree.GetItemText(item))
         try:
-            self.htmlview.LoadURL(ProgramList[itemText].docs)
+            doc_url = ProgramList[itemText].docs
+            # check the url first as ie will not return a failure code
+            if not (doc_url.lower().startswith("http") or doc_url.lower().startswith("pydro") or os.path.exists(doc_url)):
+                raise Exception("docs not found")
+            r = self.htmlview.LoadURL(doc_url)
             if not (ProgramList[itemText].opts.args or
                     ProgramList[itemText].opts.cmd or
                     ProgramList[itemText].opts.env):
