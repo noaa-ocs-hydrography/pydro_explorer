@@ -59,6 +59,7 @@ RTE = RunTypeEnum
 
 ProgramList = {}
 
+
 class ProgOpts(object):
     """ Parameters used to launch a program
 
@@ -214,6 +215,8 @@ kluster = Program("Kluster",
                    "https://kluster.readthedocs.io/en/latest/?badge=latest",
                    "Bathymetry processor"
                    )
+
+qgis = Program('QGIS', ProgOpts(cmd='qgis'), r"https://www.qgis.org/en/site/", 'QGIS')
 
 
 ProgramEnum = enum.Enum('ProgramNames',
@@ -841,6 +844,7 @@ All Programs distributed in Pydro
         self._ZfileMenuSection = [
             G("New", [[
                 I(kluster.name, self),
+                I(qgis.name, self),
             ]], -1),
             G("Backscatter", [[
                 I(PN[PE.BRESS], self),
@@ -947,6 +951,7 @@ All Programs distributed in Pydro
                 I(PN[PE.POSTACQ], self),
                 # I(PN[PE.BENCHMARK], self),
                 I(PN[PE.PERMISSIONS], self),
+                I(qgis.name, self),
                 G('Python 3.8 shells and editors', [[
                     I(PN[PE.SPYDER38], self),
                     I(PN[PE.PYTHONWIN], self),
@@ -1071,6 +1076,7 @@ All Programs distributed in Pydro
         self.recent.append(programName)
         self.log.write("Launching %s\n" % programName)
         opts = ProgramList[programName].opts
+
         if dbg:
             opts = opts.copy()
             opts.persist_console = True  # force the program to have it's own console and remain after closing (the /K option for cmd.exe)
