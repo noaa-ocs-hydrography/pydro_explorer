@@ -211,7 +211,7 @@ files_checker = Program("Files Checker",
                    )
 
 kluster = Program("Kluster",
-                   PythonOpts(["-m", "HSTB.kluster", ], "Pydro38", new_console=True, persist_console=True),  # while in alpha leave the console up
+                   PythonOpts(["-m", "HSTB.kluster", ], "Pydro38", new_console=True, persist_console=False),  # while in alpha leave the console up
                    "https://kluster.readthedocs.io/en/latest/?badge=latest",
                    "Bathymetry processor"
                    )
